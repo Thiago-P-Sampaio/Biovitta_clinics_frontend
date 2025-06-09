@@ -1,0 +1,72 @@
+.searchContainer {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 24px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1.5px solid #ccc;
+  font-size: 1rem;
+}
+
+.searchInput:focus {
+  border-color: #7c4dff;
+  outline: none;
+}
+
+.resultsGrid {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  max-height: 400px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  z-index: 1000;
+}
+
+.card {
+  cursor: pointer;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.cardImage {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 12px;
+}
+
+.cardContent h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+}
+
+.cardContent p {
+  margin: 2px 0;
+  color: #555;
+  font-size: 0.9rem;
+}

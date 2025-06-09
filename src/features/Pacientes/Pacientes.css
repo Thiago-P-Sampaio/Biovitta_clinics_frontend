@@ -1,0 +1,33 @@
+.pacientes-container {
+  padding: 20px;
+}
+
+.btn-add {
+  background-color: #10b981;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  max-width: 200px;
+  width: auto;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.btn-add:hover {
+  background-color: #059669;
+}
+
+.pacientes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}

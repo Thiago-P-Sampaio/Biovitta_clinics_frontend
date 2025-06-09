@@ -1,0 +1,74 @@
+/* Auth.css */
+
+.bgGradient {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #6a1b9a 0%, #7c4dff 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.authBox {
+  background: #fff;
+  padding: 40px 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border: 1.8px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  border-color: #7c4dff;
+  outline: none;
+}
+
+.loginBtn {
+  width: 100%;
+  padding: 14px 0;
+  background: linear-gradient(90deg, #6a1b9a 0%, #7c4dff 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.loginBtn:hover {
+  background: linear-gradient(90deg, #7c4dff 0%, #6a1b9a 100%);
+}
+
+.registerLink {
+  color: #7c4dff;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.registerLink:hover {
+  color: #6a1b9a;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  text-align: center;
+}
