@@ -1,70 +1,134 @@
+/* Variáveis CSS para consistência com outros cards */
+:root {
+  --primary-color: #6a1b9a; /* Um roxo mais escuro para elementos principais */
+  --secondary-color: #7c4dff; /* Um roxo/azul mais claro para destaques */
+  --text-dark: #222;
+  --text-medium: #555;
+  --text-light: #888;
+  --border-radius-base: 12px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+}
+
 .cardPaciente {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 16px;
+  border-radius: var(--border-radius-base);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Sombra mais suave e proeminente */
+  padding: var(--spacing-md); /* Mantém o padding interno para o conteúdo */
   display: flex;
-  flex-direction: column;
-  width: 280px;
-  box-sizing: border-box;
+  flex-direction: column; /* Essencial para que margin-top: auto funcione para as ações */
+  width: 280px; /* Largura padrão do card */
+  box-sizing: border-box; /* Inclui padding e borda na largura total */
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  overflow: hidden; /* Garante que as bordas arredondadas e a imagem funcionem bem */
+  position: relative; /* Mantém relative, caso precise para outros elementos futuros. */
 }
 
 .cardPaciente:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); /* Sombra maior no hover */
+  transform: translateY(-5px); /* Efeito de "levantar" no hover */
 }
 
-.cardPaciente img {
+/* Container para a imagem que vai de ponta a ponta */
+.cardPaciente-image-container {
+  /* Calcula a largura para "cobrir" o padding lateral do card pai */
+  width: calc(100% + var(--spacing-md) * 2); /* Expande para além do padding lateral */
+  height: 160px; /* Altura da imagem */
+  /* Move o container da imagem para fora do padding do card */
+  margin: calc(-1 * var(--spacing-md)) calc(-1 * var(--spacing-md)) var(--spacing-md) calc(-1 * var(--spacing-md));
+  overflow: hidden; /* Garante que a imagem dentro seja cortada se passar */
+  /* Aplica o border-radius superior do card a este container */
+  border-top-left-radius: var(--border-radius-base);
+  border-top-right-radius: var(--border-radius-base);
+}
+
+.cardPaciente-img {
   width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 12px;
+  height: 100%; /* Preenche 100% da altura do seu container */
+  object-fit: inherit  !important;
+  display: block; /* Garante que a imagem se comporte como um bloco */
+  transition: transform 0.3s ease; /* Efeito de zoom na imagem no hover do card */
 }
 
-.cardPaciente h3 {
-  font-weight: 600;
-  font-size: 1.25rem;
-  margin-bottom: 8px;
-  color: #222;
+.cardPaciente:hover .cardPaciente-img {
+  transform: scale(1.05); /* Leve zoom na imagem no hover do card */
 }
 
-.cardPaciente p {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 6px;
-  flex-grow: 1;
+.cardPaciente-name { /* Classe para o nome do paciente (h3) */
+  font-weight: 700; /* Mais negrito para o nome */
+  font-size: 1.4rem; /* Tamanho maior para o nome */
+  margin-bottom: var(--spacing-sm);
+  color: var(--primary-color); /* Nome do paciente na cor principal */
+  line-height: 1.2;
 }
 
-.cardPaciente .actions {
-  margin-top: auto;
+.cardPaciente-detail { /* Classe para detalhes como email, telefone e nascimento (p) */
+  font-size: 0.95rem;
+  color: var(--text-medium);
+  margin-bottom: var(--spacing-xs); /* Espaçamento menor entre os detalhes */
+  display: flex; /* Para alinhar ícone e texto */
+  align-items: center;
+  gap: var(--spacing-sm); /* Espaçamento entre ícone e texto */
+}
+
+.cardPaciente-icon { /* Classe para os ícones */
+  color: var(--secondary-color);
+  font-size: 1rem;
+}
+
+/* A div .cardPaciente-actions e os botões serão estilizados abaixo */
+.cardPaciente-actions { /* Div que contém os botões Editar/Excluir */
+  margin-top: auto; /* IMPORTANTE: Empurra este elemento para o final do flex container */
+  padding-top: var(--spacing-md); /* Espaçamento acima da linha divisória */
+  border-top: 1px solid #eee; /* Linha divisória sutil */
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Distribui os botões nas extremidades */
+  gap: var(--spacing-sm); /* Espaçamento entre os botões */
+  /* Propriedades para garantir que não haja interferência de outros estilos de posicionamento */
+  position: static;
+  float: none;
+  clear: both;
+  top: unset;
+  right: unset;
+  left: unset;
+  bottom: unset;
+  transform: none;
+  z-index: auto;
 }
 
-.cardPaciente button {
-  padding: 6px 12px;
-  border-radius: 6px;
+.cardPaciente-button { /* Classe base para os botões */
+  flex: 1; /* Permite que os botões cresçam para preencher o espaço */
+  padding: 10px 15px;
+  border-radius: 8px;
   border: none;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adiciona uma pequena sombra para destacar os botões */
 }
 
-.cardPaciente .editButton {
+.cardPaciente-button:active {
+  transform: scale(0.98);
+}
+
+.cardPaciente-editButton {
   background-color: #2563eb;
 }
 
-.cardPaciente .editButton:hover {
+.cardPaciente-editButton:hover {
   background-color: #1e40af;
 }
 
-.cardPaciente .deleteButton {
+.cardPaciente-deleteButton {
   background-color: #dc2626;
 }
 
-.cardPaciente .deleteButton:hover {
-  background-color: #991b1b;
+.cardPaciente-deleteButton:hover {
+  background-color: #b91c1c;
 }

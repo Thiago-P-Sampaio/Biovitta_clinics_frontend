@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './MedicoDetalhesModal.css';
+// Garanta que o Font Awesome esteja importado globalmente no seu projeto (ex: App.js ou index.js)
+// import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export default function MedicoDetalhesModal({ isOpen, onClose, medico }) {
   const [especialidades, setEspecialidades] = useState([]);
@@ -23,14 +25,42 @@ export default function MedicoDetalhesModal({ isOpen, onClose, medico }) {
   return (
     <div className="modalOverlay">
       <div className="modalContent">
-        <h2>Detalhes do Médico</h2>
-        <img src={medico.imgUrl || 'https://via.placeholder.com/150'} alt={medico.nome} className="medicoImage" />
-        <p><strong>Nome:</strong> {medico.nome}</p>
-        <p><strong>CRM:</strong> {medico.crm}</p>
-        <p><strong>Email:</strong> {medico.email}</p>
-        <p><strong>Telefone:</strong> {medico.telefone}</p>
-        <p><strong>Especialidades:</strong> {especialidades.map(e => e.nome).join(', ')}</p>
-        <button onClick={onClose} className="btnClose">Fechar</button>
+        <button className="modalCloseButton" onClick={onClose} aria-label="Fechar">
+          <i className="fas fa-times"></i> {/* Ícone de fechar */}
+        </button>
+
+        <h2 className="modalTitle">Detalhes do Médico</h2>
+        
+        <div className="medicoDetailsHeader"> {/* Novo div para centralizar imagem e nome */}
+          <img
+            src={medico.imgUrl || 'https://via.placeholder.com/150/6a1b9a/ffffff?text=Médico'}
+            alt={medico.nome}
+            className="medicoDetailsImage" // Nova classe para a imagem
+          />
+          <h3 className="medicoDetailsName">{medico.nome}</h3> {/* Nova classe para o nome */}
+        </div>
+
+        <div className="medicoDetailsBody"> {/* Novo div para o corpo dos detalhes */}
+          <p className="medicoDetailItem">
+            <strong>CRM:</strong> {medico.crm}
+          </p>
+          <p className="medicoDetailItem">
+            <i className="fas fa-envelope medicoDetailIcon"></i> {/* Ícone de e-mail */}
+            <strong>Email:</strong> {medico.email}
+          </p>
+          <p className="medicoDetailItem">
+            <i className="fas fa-phone medicoDetailIcon"></i> {/* Ícone de telefone */}
+            <strong>Telefone:</strong> {medico.telefone}
+          </p>
+          <p className="medicoDetailItem">
+            <i className="fas fa-tags medicoDetailIcon"></i> {/* Ícone de tags/especialidades */}
+            <strong>Especialidades:</strong> {especialidades.map(e => e.nome).join(', ') || 'Nenhuma'}
+          </p>
+        </div>
+
+        <div className="modalActions">
+          <button onClick={onClose} className="btnConfirmClose">Fechar</button> {/* Renomeei a classe do botão */}
+        </div>
       </div>
     </div>
   );

@@ -1,70 +1,151 @@
+/* Variáveis CSS (manter como está) */
+:root {
+  --primary-color: #6a1b9a;
+  --secondary-color: #7c4dff;
+  --text-dark: #222;
+  --text-medium: #555;
+  --text-light: #888;
+  --border-radius-base: 12px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+}
+
 .cardMedico {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 16px;
+  border-radius: var(--border-radius-base);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
   width: 280px;
   box-sizing: border-box;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  overflow: hidden;
+  position: relative;
 }
 
 .cardMedico:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
 }
 
-.cardMedico img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 12px;
+/* NOVO: Container para a imagem */
+.cardMedico-image-container {
+  width: calc(100% + var(--spacing-md) * 2) !important; /* FORÇANDO A LARGURA */
+  height: 160px !important; /* FORÇANDO A ALTURA */
+  margin: calc(-1 * var(--spacing-md)) calc(-1 * var(--spacing-md)) var(--spacing-md) calc(-1 * var(--spacing-md)) !important; /* FORÇANDO AS MARGENS */
+  overflow: hidden !important; /* FORÇANDO OVERFLOW */
+  border-top-left-radius: var(--border-radius-base) !important; /* FORÇANDO BORDER-RADIUS */
+  border-top-right-radius: var(--border-radius-base) !important; /* FORÇANDO BORDER-RADIUS */
 }
 
-.cardMedico h3 {
+.cardMedico-img {
+  width: 100% !important; /* FORÇANDO LARGURA */
+  height: 100% !important; /* FORÇANDO ALTURA */
+  object-fit: inherit  !important; /* FORÇANDO OBJECT-FIT */
+  display: block !important; /* FORÇANDO DISPLAY */
+  transition: transform 0.3s ease; /* Transições podem ficar sem !important */
+}
+
+.cardMedico:hover .cardMedico-img {
+  transform: scale(1.05);
+}
+
+.cardMedico-name {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--primary-color);
+  line-height: 1.2;
+}
+
+.cardMedico-detail {
+  font-size: 0.95rem;
+  color: var(--text-medium);
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.cardMedico-icon {
+  color: var(--secondary-color);
+  font-size: 1rem;
+}
+
+.cardMedico-label {
   font-weight: 600;
-  font-size: 1.25rem;
-  margin-bottom: 8px;
-  color: #222;
+  color: var(--text-dark);
 }
 
-.cardMedico p {
+.cardMedico-specialties {
   font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 6px;
-  flex-grow: 1;
+  color: var(--text-medium);
+  margin-top: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  line-height: 1.4;
 }
 
-.cardMedico .actions {
+.cardMedico-more-specialties {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-left: 4px;
+}
+
+.cardMedico-actions {
   margin-top: auto;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid #eee;
   display: flex;
   justify-content: space-between;
+  gap: var(--spacing-sm);
+  position: static;
+  float: none;
+  clear: both;
+  top: unset;
+  right: unset;
+  left: unset;
+  bottom: unset;
+  transform: none;
+  z-index: auto;
 }
 
-.cardMedico button {
-  padding: 6px 12px;
-  border-radius: 6px;
+.cardMedico-button {
+  flex: 1;
+  padding: 10px 15px;
+  border-radius: 8px;
   border: none;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.cardMedico .editButton {
+.cardMedico-button:active {
+  transform: scale(0.98);
+}
+
+.cardMedico-editButton {
   background-color: #2563eb;
 }
 
-.cardMedico .editButton:hover {
+.cardMedico-editButton:hover {
   background-color: #1e40af;
 }
 
-.cardMedico .deleteButton {
+.cardMedico-deleteButton {
   background-color: #dc2626;
 }
 
-.cardMedico .deleteButton:hover {
-  background-color: #991b1b;
+.cardMedico-deleteButton:hover {
+  background-color: #b91c1c;
 }

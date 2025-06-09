@@ -5,10 +5,11 @@ import ConsultaModal from './ConsultaModal.js';
 import './Consultas.css';
 
 export default function Consultas() {
-  const { user } = useAuth();
+  const { user } = useAuth(); // Assume que user.role e user.pacienteId/medicoId estão disponíveis
 
   const [consultas, setConsultas] = useState([]);
   const [medicos, setMedicos] = useState([]);
+  const [pacientes, setPacientes] = useState([]); // Novo estado para armazenar pacientes
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -26,10 +27,15 @@ export default function Consultas() {
   useEffect(() => {
     fetchPacienteNome();
     fetchMedicos();
-  }, []);
+    // Apenas busca pacientes se o usuário logado for ADMIN ou Médico
+    if (user.role === 'admin' || user.role === 'medico') {
+      fetchPacientes();
+    }
+  }, [user.role]); // Adiciona user.role como dependência para re-executar se o papel mudar
 
   useEffect(() => {
     // Só busca as consultas após obter o nome do paciente (para pacientes)
+    // ou se o papel não for paciente (ADMIN/Médico não dependem do nome do paciente logado)
     if (user.role !== 'paciente' || nomePaciente) {
       fetchConsultas();
     }
@@ -46,7 +52,7 @@ export default function Consultas() {
         setNomePaciente(null);
       }
     } else {
-      setNomePaciente(null);
+      setNomePaciente(null); // Zera o nome do paciente para ADMIN/Médico
     }
   }
 
@@ -59,6 +65,16 @@ export default function Consultas() {
     }
   }
 
+  // NOVA FUNÇÃO: Busca todos os pacientes
+  async function fetchPacientes() {
+    try {
+      const response = await api.get('/api/usuario/paciente/get/all');
+      setPacientes(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar pacientes', error);
+    }
+  }
+
   async function fetchConsultas() {
     try {
       setLoading(true);
@@ -68,11 +84,18 @@ export default function Consultas() {
       if (user.role === 'paciente' && nomePaciente) {
         const nomePacienteNormalizado = normalizeString(nomePaciente);
         dados = dados.filter(c => normalizeString(c.paciente) === nomePacienteNormalizado);
+      } else if (user.role === 'medico' && user.medicoId) { // Filtro para médicos
+        // Se a API de consulta não retornar o CRM, você precisará ajustar aqui
+        // ou fazer a API filtrar por médico logado.
+        const crmMedicoNormalizado = normalizeString(user.medicoId); // Assumindo user.medicoId é o CRM
+        dados = dados.filter(c => normalizeString(c.medicoId) === crmMedicoNormalizado);
       }
+
 
       setConsultas(dados);
       setError('');
-    } catch {
+    } catch (error) {
+      console.error('Erro ao carregar consultas:', error);
       setError('Erro ao carregar consultas.');
     } finally {
       setLoading(false);
@@ -94,9 +117,11 @@ export default function Consultas() {
   async function handleDelete(consulta) {
     if (!window.confirm(`Deseja realmente excluir a consulta nº ${consulta.consultaId}?`)) return;
     try {
-      await api.delete(`/api/consulta/delete/${consulta.consultaId}`);
+      await api.delete(`/api/consulta/dell/${consulta.consultaId}`);
       setConsultas(prev => prev.filter(c => c.consultaId !== consulta.consultaId));
-    } catch {
+      alert('Consulta excluída com sucesso!');
+    } catch (error) {
+      console.error('Erro ao excluir consulta:', error);
       alert('Erro ao excluir consulta.');
     }
   }
@@ -106,19 +131,26 @@ export default function Consultas() {
       const dataToSend = {
         dataConsulta: data.dataConsulta,
         medicoId: data.medicoId,
-        pacienteId: user.pacienteId || null, // Ajuste conforme sua estrutura do user
+        // Define pacienteId com base no papel do usuário
+        pacienteId: user.role === 'paciente' ? user.pacienteId : data.pacienteId,
       };
+
+      // Adicione um log antes de enviar
+      console.log("Dados da consulta a enviar:", dataToSend);
 
       if (isEdit) {
         dataToSend.consultaId = selectedConsulta.consultaId;
         await api.put(`/api/consulta/edit/${dataToSend.consultaId}`, dataToSend);
+        alert('Consulta atualizada com sucesso!');
       } else {
         await api.post('/api/consulta/add', dataToSend);
+        alert('Consulta adicionada com sucesso!');
       }
       fetchConsultas();
       setModalOpen(false);
       setSelectedConsulta(null);
-    } catch {
+    } catch (error) {
+      console.error('Erro ao salvar consulta:', error.response?.data || error.message || error);
       alert('Erro ao salvar consulta.');
     }
   }
@@ -170,7 +202,8 @@ export default function Consultas() {
           onSubmit={handleSubmit}
           initialData={selectedConsulta}
           medicos={medicos}
-          isEdit={isEdit}
+          pacientes={pacientes} 
+          userRole={user.role} 
         />
       )}
     </div>

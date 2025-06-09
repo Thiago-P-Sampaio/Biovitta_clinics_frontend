@@ -1,102 +1,166 @@
+/* Variáveis CSS para consistência */
+:root {
+  --primary-color: #6a1b9a; /* Roxo principal */
+  --secondary-color: #7c4dff; /* Roxo/azul de destaque */
+  --text-dark: #333;
+  --text-medium: #555;
+  --text-light: #888;
+  --border-color: #eee;
+  --bg-light: #f9f9f9;
+  --border-radius-base: 12px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+}
+
 .modalOverlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6); /* Fundo mais escuro para maior contraste */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease-out; /* Animação de fade-in */
 }
 
 .modalContent {
   background: white;
-  border-radius: 12px;
-  padding: 24px;
-  width: 400px;
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-lg); /* Aumenta o padding interno */
+  width: 450px; /* Largura um pouco maior */
   max-width: 90%;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* Sombra mais suave e profunda */
   max-height: 90vh;
   overflow-y: auto;
+  position: relative; /* Para posicionar o botão de fechar */
+  animation: slideIn 0.3s ease-out; /* Animação de slide-in */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md); /* Espaçamento entre os blocos de conteúdo */
 }
 
-.medicoImage {
-  width: 50%;
-  height: 180px;
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modalCloseButton {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.modalCloseButton:hover {
+  color: var(--text-dark);
+}
+
+.modalTitle {
+  font-size: 1.8rem; /* Título maior */
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  font-weight: 700;
+  padding-right: var(--spacing-lg); /* Para não colidir com o botão de fechar */
+}
+
+.medicoDetailsHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza a imagem e o nome */
+  gap: var(--spacing-sm); /* Espaçamento entre imagem e nome */
+  margin-bottom: var(--spacing-md);
+}
+
+.medicoDetailsImage {
+  width: 150px; /* Tamanho fixo para a imagem */
+  height: 150px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  border-radius: 50%; /* Imagem circular */
+  border: 4px solid var(--secondary-color); /* Borda colorida */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra na imagem */
+  margin-bottom: var(--spacing-sm); /* Espaçamento abaixo da imagem */
 }
 
-.medicoForm label {
-  display: block;
-  margin-top: 12px;
+.medicoDetailsName {
+  font-size: 1.6rem; /* Nome um pouco maior */
   font-weight: 600;
-  color: #333;
+  color: var(--text-dark);
+  margin-bottom: var(--spacing-md);
 }
 
-.medicoForm input,
-.medicoForm select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  font-size: 1rem;
+.medicoDetailsBody {
+  background: var(--bg-light); /* Fundo sutil para a seção de detalhes */
+  border-radius: var(--spacing-sm);
+  padding: var(--spacing-md);
 }
 
-.medicoForm select[multiple] {
-  height: 120px;
+.medicoDetailItem {
+  font-size: 1rem; /* Tamanho padrão para detalhes */
+  color: var(--text-dark);
+  margin-bottom: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm); /* Espaçamento entre ícone e texto */
+}
+
+.medicoDetailItem:last-child {
+  margin-bottom: 0; /* Remove margem do último item */
+}
+
+.medicoDetailItem strong {
+  color: var(--primary-color); /* Nomes dos campos em roxo */
+  margin-right: var(--spacing-xs); /* Espaçamento entre o label e o valor */
+  min-width: 80px; /* Ajuda a alinhar os labels */
+}
+
+.medicoDetailIcon {
+  color: var(--secondary-color);
+  font-size: 1.1rem;
 }
 
 .modalActions {
-  margin-top: 20px;
+  margin-top: var(--spacing-md); /* Espaçamento acima dos botões */
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: flex-end; /* Alinha o botão à direita */
+  gap: var(--spacing-sm);
+  border-top: 1px solid var(--border-color); /* Linha divisória */
+  padding-top: var(--spacing-md);
 }
 
-.btnCancel {
-  background: #eee;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.btnCancel:hover {
-  background: #ccc;
-}
-
-.btnSave {
-  background: #2563eb;
+.btnConfirmClose { /* Novo nome para o botão de fechar inferior */
+  background: var(--primary-color); /* Usa a cor primária */
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 10px 20px; /* Padding maior */
+  border-radius: var(--spacing-sm); /* Bordas arredondadas */
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
-.btnSave:hover {
-  background: #1e40af;
+.btnConfirmClose:hover {
+  background: #5a128a; /* Tom mais escuro no hover */
+  transform: translateY(-2px); /* Efeito de "levantar" */
 }
 
-.btnClose {
-  margin-top: 20px;
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.btnClose:hover {
-  background: #991b1b;
-}
+/* Os estilos .medicoForm, .medicoForm input, select, .modalActions (antigo), .btnCancel, .btnSave, .btnClose (antigo) foram removidos pois não são usados neste modal. */

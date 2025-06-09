@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth, AuthProvider } from './context/AuthContext';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import Login from './features/Auth/Login';
 import Register from './features/Auth/Register';

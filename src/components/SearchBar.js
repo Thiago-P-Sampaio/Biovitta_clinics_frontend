@@ -1,94 +1,30 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
-import './SearchBar.css'; // CSS global
+// import { useNavigate } from 'react-router-dom'; // Não precisamos mais do useNavigate
+// import api from '../services/api'; // Não precisamos mais do api aqui
+import './SearchBar.css';
 
-export default function SearchBar({ onSearch }) {
+// A SearchBar agora apenas passa a query para o componente pai
+export default function SearchBar({ onSearchChange }) { // Renomeado a prop para onSearchChange
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
-  const navigate = useNavigate();
 
   const handleChange = async e => {
     const value = e.target.value;
     setQuery(value);
-
-    if (value.length < 3) {
-      setResults([]);
-      onSearch([]);
-      return;
-    }
-
-    try {
-      const [pacientesResp, medicosResp] = await Promise.all([
-        api.get(`/api/usuario/paciente/busca?nome=${value}`),
-        api.get(`/api/usuario/medico/busca?nome=${value}`)
-      ]);
-
-      const pacientes = (pacientesResp.data || []).map(p => ({
-        ...p,
-        tipo: 'Paciente',
-        key: `paciente-${p.pacienteId}`
-      }));
-
-      const medicos = (medicosResp.data || []).map(m => ({
-        ...m,
-        tipo: 'Médico',
-        key: `medico-${m.crm}`
-      }));
-
-      const combinedResults = [...pacientes, ...medicos];
-      setResults(combinedResults);
-      onSearch(combinedResults);
-    } catch {
-      setResults([]);
-      onSearch([]);
-    }
-  };
-
-  const handleClick = item => {
-    if (item.tipo === 'Paciente') {
-      navigate(`/pacientes/${item.pacienteId}`);
-    } else if (item.tipo === 'Médico') {
-      navigate(`/medicos/${item.crm}`);
-    }
-    setQuery('');
-    setResults([]);
+    // Chama a função passada pelo componente pai com o valor da busca
+    onSearchChange(value);
   };
 
   return (
     <div className="searchContainer">
       <input
         type="text"
-        placeholder="Buscar pacientes ou médicos..."
+        placeholder="Buscar..." // Placeholder mais genérico
         value={query}
         onChange={handleChange}
         className="searchInput"
       />
-      {results.length > 0 && (
-        <div className="resultsGrid">
-          {results.map(item => (
-            <div
-              key={item.key}
-              className="card"
-              onClick={() => handleClick(item)}
-              role="button"
-              tabIndex={0}
-              onKeyPress={e => (e.key === 'Enter' ? handleClick(item) : null)}
-            >
-              <img
-                src={item.imgUrl || 'https://via.placeholder.com/150'}
-                alt={item.nome}
-                className="cardImage"
-              />
-              <div className="cardContent">
-                <h3>{item.nome}</h3>
-                <p>{item.tipo}</p>
-                <p>{item.email}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* REMOVIDO: A div resultsGrid e toda a lógica de exibição de sugestões foram removidas daqui.
+          Agora a SearchBar apenas fornece a query para o componente pai filtrar. */}
     </div>
   );
 }
