@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react'; // Importe useCallback
 import api from '../../services/api';
 import './Pacientes.css';
 import PacienteModal from './PacienteModal';
@@ -11,25 +11,50 @@ export default function Pacientes() {
   const { user } = useAuth();
 
   const [pacientes, setPacientes] = useState([]);
-  const [filteredPacientes, setFilteredPacientes] = useState([]); // Estado para pacientes filtrados
+  const [filteredPacientes, setFilteredPacientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [searchQuery, setSearchQuery] = useState(''); // Novo estado para a query de busca
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [modalOpen, setModalOpen] = useState(false);
   const [detalhesModalOpen, setDetalhesModalOpen] = useState(false);
   const [selectedPaciente, setSelectedPaciente] = useState(null);
-  const [isEdit, setIsEdit] = useState(false); // Estado para controlar se é edição ou adição
+  const [isEdit, setIsEdit] = useState(false);
+
+  // Use useCallback para memorizar a função fetchPacientes
+  const fetchPacientes = useCallback(async () => {
+    try {
+      setLoading(true);
+      let response;
+      if (user.role === 'paciente') {
+        response = await api.get(`/auth/buscar/${encodeURIComponent(user.usuario)}`);
+        setPacientes([response.data]);
+        setFilteredPacientes([response.data]);
+      } else {
+        response = await api.get('/api/usuario/paciente/get/all');
+        setPacientes(response.data);
+        setFilteredPacientes(response.data);
+      }
+      setError('');
+    } catch (err) {
+      console.error("Erro ao carregar pacientes: ", err);
+      setError('Erro ao carregar pacientes.');
+      setPacientes([]);
+      setFilteredPacientes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]); // fetchPacientes depende de 'user'
 
   // Efeito para carregar os pacientes inicialmente e sempre que o usuário mudar
   useEffect(() => {
     fetchPacientes();
-  }, [user]);
+  }, [fetchPacientes]); // Inclua fetchPacientes no array de dependências
 
   // Efeito para filtrar pacientes sempre que a lista original ou a query de busca mudar
   useEffect(() => {
     const lowerCaseQuery = searchQuery.toLowerCase();
-    if (lowerCaseQuery.length > 0) { // Alterado para lowerCaseQuery.length
+    if (lowerCaseQuery.length > 0) {
       const filtered = pacientes.filter(paciente =>
         (paciente.nome && paciente.nome.toLowerCase().includes(lowerCaseQuery)) ||
         (paciente.email && paciente.email.toLowerCase().includes(lowerCaseQuery)) ||
@@ -37,52 +62,25 @@ export default function Pacientes() {
       );
       setFilteredPacientes(filtered);
     } else {
-      setFilteredPacientes(pacientes); // Se a busca estiver vazia, exibe todos os pacientes
+      setFilteredPacientes(pacientes);
     }
-  }, [pacientes, searchQuery]); // Dependências: `pacientes` e `searchQuery`
+  }, [pacientes, searchQuery]);
 
-  async function fetchPacientes() {
-    try {
-      setLoading(true);
-      let response;
-      if (user.role === 'paciente') {
-        // Paciente só vê ele mesmo
-        response = await api.get(`/auth/buscar/${encodeURIComponent(user.usuario)}`);
-        setPacientes([response.data]);
-        setFilteredPacientes([response.data]); // Atualiza o estado filtrado também
-      } else {
-        // Admin e médico veem todos
-        response = await api.get('/api/usuario/paciente/get/all');
-        setPacientes(response.data);
-        setFilteredPacientes(response.data); // Atualiza o estado filtrado também
-      }
-      setError('');
-    } catch (err) {
-      console.error("Erro ao carregar pacientes: ", err);
-      setError('Erro ao carregar pacientes.');
-      setPacientes([]); // Garante que a lista esteja vazia em caso de erro
-      setFilteredPacientes([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Função para lidar com a mudança na SearchBar (atualiza o estado da query de busca)
   const handleSearchChange = (query) => {
     setSearchQuery(query);
   };
 
   function handleAdd() {
-    if (user.role !== 'admin') return; // Apenas admin pode adicionar
-    setSelectedPaciente(null); // Limpa o paciente selecionado para adicionar
-    setIsEdit(false); // Define como false para indicar adição
+    if (user.role !== 'admin') return;
+    setSelectedPaciente(null);
+    setIsEdit(false);
     setModalOpen(true);
   }
 
   function handleEdit(paciente) {
-    if (user.role !== 'admin') return; // Apenas admin pode editar
-    setSelectedPaciente(paciente); // Define o paciente a ser editado
-    setIsEdit(true); // Define como true para indicar edição
+    if (user.role !== 'admin') return;
+    setSelectedPaciente(paciente);
+    setIsEdit(true);
     setModalOpen(true);
   }
 
@@ -92,38 +90,37 @@ export default function Pacientes() {
   }
 
   async function handleDelete(paciente) {
-    if (user.role !== 'admin') return; // Apenas admin pode excluir
+    if (user.role !== 'admin') return;
+    // Substitua window.confirm por um modal personalizado para evitar alerts em iframes
     if (!window.confirm(`Deseja realmente excluir ${paciente.nome}?`)) return;
     try {
       await api.delete(`/api/usuario/paciente/dell/${paciente.pacienteId || paciente.id}`);
       fetchPacientes(); // Recarrega a lista após exclusão
-      alert('Paciente excluído com sucesso!');
+      alert('Paciente excluído com sucesso!'); // Substitua alert por um modal personalizado
     } catch (err) {
       console.error("Erro ao excluir paciente: ", err.response?.data || err.message || err);
-      alert('Erro ao excluir paciente. Verifique o console para mais detalhes.');
+      alert('Erro ao excluir paciente. Verifique o console para mais detalhes.'); // Substitua alert
     }
   }
 
   async function handleSubmit(data) {
-    if (user.role !== 'admin') return; // Apenas admin pode salvar
+    if (user.role !== 'admin') return;
     try {
       if (isEdit) {
-        // Log dos dados que estão sendo enviados para o PUT
         console.log("Enviando PUT para /api/usuario/paciente/edit/", selectedPaciente.pacienteId || selectedPaciente.id, "com dados:", data);
         await api.put(`/api/usuario/paciente/edit/${selectedPaciente.pacienteId || selectedPaciente.id}`, data);
-        alert('Paciente atualizado com sucesso!');
+        alert('Paciente atualizado com sucesso!'); // Substitua alert
       } else {
-        // Log dos dados que estão sendo enviados para o POST
         console.log("Enviando POST para /api/usuario/paciente/add com dados:", data);
         await api.post('/api/usuario/paciente/add', data);
-        alert('Paciente adicionado com sucesso!');
+        alert('Paciente adicionado com sucesso!'); // Substitua alert
       }
       fetchPacientes(); // Recarrega a lista após adição/edição
       setModalOpen(false);
       setSelectedPaciente(null);
     } catch (err) {
-      console.error("Erro ao salvar paciente: ", err.response?.data || err.message || err); // Log do erro completo da API
-      alert('Erro ao salvar paciente. Verifique o console para mais detalhes.');
+      console.error("Erro ao salvar paciente: ", err.response?.data || err.message || err);
+      alert('Erro ao salvar paciente. Verifique o console para mais detalhes.'); // Substitua alert
     }
   }
 
@@ -140,11 +137,9 @@ export default function Pacientes() {
         </button>
       )}
 
-      {/* Passa a função handleSearchChange para a SearchBar */}
       <SearchBar onSearchChange={handleSearchChange} />
 
       <div className="pacientes-grid">
-        {/* Condição para exibir mensagem de "Nenhum paciente encontrado" */}
         {filteredPacientes.length === 0 && searchQuery.length > 0 ? (
           <p style={{ textAlign: 'center', width: '100%', color: '#666' }}>Nenhum paciente encontrado com esta busca.</p>
         ) : filteredPacientes.length === 0 && !loading && !error ? (
@@ -170,7 +165,7 @@ export default function Pacientes() {
         }}
         initialValues={selectedPaciente}
         onSubmit={handleSubmit}
-        isEdit={isEdit} 
+        isEdit={isEdit}
       />
 
       {detalhesModalOpen && selectedPaciente && (

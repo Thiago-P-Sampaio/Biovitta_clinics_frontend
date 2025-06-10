@@ -8,28 +8,31 @@ export default function ConsultaModal({ isOpen, onClose, onSubmit, initialData, 
     pacienteId: '', // Adicionado pacienteId ao estado do formulário
     dataConsulta: '',
   });
-  const [especialidades, setEspecialidades] = useState([]);
+
+  // O estado 'especialidades' foi removido, pois não é utilizado neste modal.
 
   useEffect(() => {
     if (initialData) {
       // Para edição, preenche medicoId e pacienteId com base nos nomes
-      const medicoSelecionado = medicos.find(m => m.nome === initialData.medico);
-      const pacienteSelecionado = pacientes.find(p => p.nome === initialData.paciente);
+      // Garante que 'medicos' e 'pacientes' sejam arrays para usar .find
+      const medicoSelecionado = Array.isArray(medicos) ? medicos.find(m => m.nome === initialData.medico) : undefined;
+      const pacienteSelecionado = Array.isArray(pacientes) ? pacientes.find(p => p.nome === initialData.paciente) : undefined;
 
       setForm({
         medicoId: medicoSelecionado ? medicoSelecionado.crm : '',
         pacienteId: pacienteSelecionado ? pacienteSelecionado.pacienteId : '', // Preenche pacienteId
         dataConsulta: initialData.dataConsulta ? initialData.dataConsulta.slice(0, 16) : '',
       });
-      setEspecialidades(medicoSelecionado?.especialidades || []);
+      // A linha setEspecialidades(medicoSelecionado?.especialidades || []); foi removida.
     } else {
       // Para adição, reseta o formulário
       setForm({
         medicoId: '',
+        // Se for paciente, o pacienteId inicial pode ser predefinido ou deixado vazio
+        // com base na lógica do componente pai que chama o modal.
         pacienteId: '',
         dataConsulta: '',
       });
-      setEspecialidades([]);
     }
   }, [initialData, medicos, pacientes]); // Adiciona pacientes como dependência
 
@@ -37,8 +40,7 @@ export default function ConsultaModal({ isOpen, onClose, onSubmit, initialData, 
     const medicoId = e.target.value;
     setForm(prev => ({ ...prev, medicoId }));
 
-    const medico = medicos.find(m => m.crm === medicoId);
-    setEspecialidades(medico?.especialidades || []);
+    // A lógica de setEspecialidades(medico?.especialidades || []); foi removida.
   }
 
   function handleChange(e) {
@@ -52,7 +54,7 @@ export default function ConsultaModal({ isOpen, onClose, onSubmit, initialData, 
     // Se for paciente, apenas medicoId e dataConsulta são obrigatórios.
     // Se for ADMIN ou Médico, todos os 3 (pacienteId, medicoId, dataConsulta) são obrigatórios.
     if (!form.medicoId || !form.dataConsulta || ((userRole === 'admin' || userRole === 'medico') && !form.pacienteId)) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
+      alert('Por favor, preencha todos os campos obrigatórios.'); // Substitua por um modal personalizado
       return;
     }
 
@@ -80,7 +82,7 @@ export default function ConsultaModal({ isOpen, onClose, onSubmit, initialData, 
                 required={isAdminOrMedico} // É obrigatório para ADMIN/Médico
               >
                 <option value="">Selecione um paciente</option>
-                {pacientes.map(p => (
+                {Array.isArray(pacientes) && pacientes.map(p => (
                   <option key={p.pacienteId} value={p.pacienteId}>{p.nome}</option>
                 ))}
               </select>
@@ -90,13 +92,12 @@ export default function ConsultaModal({ isOpen, onClose, onSubmit, initialData, 
           <label>Médico*</label>
           <select name="medicoId" value={form.medicoId} onChange={handleMedicoChange} required>
             <option value="">Selecione um médico</option>
-            {medicos.map(m => (
+            {Array.isArray(medicos) && medicos.map(m => (
               <option key={m.crm} value={m.crm}>{m.nome}</option>
             ))}
           </select>
 
-          {/* <label>Especialidades do Médico</label>
-          <input type="text" readOnly value={especialidades.map(e => e.nome).join(', ')} /> */}
+          {/* Campo de Especialidades do Médico foi removido ou comentado, pois não é usado aqui. */}
 
           <label>Data e Hora da Consulta*</label>
           <input

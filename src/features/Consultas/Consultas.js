@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react'; // Importe useCallback
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import ConsultaModal from './ConsultaModal.js';
 import './Consultas.css';
 
 export default function Consultas() {
-  const { user } = useAuth(); // Assume que user.role e user.pacienteId/medicoId estão disponíveis
+  const { user } = useAuth();
 
   const [consultas, setConsultas] = useState([]);
   const [medicos, setMedicos] = useState([]);
-  const [pacientes, setPacientes] = useState([]); // Novo estado para armazenar pacientes
+  const [pacientes, setPacientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -17,32 +17,35 @@ export default function Consultas() {
   const [selectedConsulta, setSelectedConsulta] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
 
-  const [nomePaciente, setNomePaciente] = useState(null); // Nome do paciente obtido via API
+  const [nomePaciente, setNomePaciente] = useState(null);
 
   // Normaliza strings para comparação segura
-  function normalizeString(str) {
+  const normalizeString = useCallback((str) => {
     return str?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim() || '';
-  }
+  }, []);
 
-  useEffect(() => {
-    fetchPacienteNome();
-    fetchMedicos();
-    // Apenas busca pacientes se o usuário logado for ADMIN ou Médico
-    if (user.role === 'admin' || user.role === 'medico') {
-      fetchPacientes();
+  // Função para buscar médicos
+  const fetchMedicos = useCallback(async () => {
+    try {
+      const response = await api.get('/api/medicos/get/all');
+      setMedicos(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar médicos', error);
     }
-  }, [user.role]); // Adiciona user.role como dependência para re-executar se o papel mudar
+  }, []); // Sem dependências, pois não usa variáveis do escopo
 
-  useEffect(() => {
-    // Só busca as consultas após obter o nome do paciente (para pacientes)
-    // ou se o papel não for paciente (ADMIN/Médico não dependem do nome do paciente logado)
-    if (user.role !== 'paciente' || nomePaciente) {
-      fetchConsultas();
+  // Função para buscar pacientes
+  const fetchPacientes = useCallback(async () => {
+    try {
+      const response = await api.get('/api/usuario/paciente/get/all');
+      setPacientes(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar pacientes', error);
     }
-  }, [nomePaciente, user.role]);
+  }, []); // Sem dependências
 
-  // Busca o nome do paciente pelo email do usuário logado
-  async function fetchPacienteNome() {
+  // Função para buscar o nome do paciente logado
+  const fetchPacienteNome = useCallback(async () => {
     if (user.role === 'paciente') {
       try {
         const response = await api.get(`/auth/buscar/${encodeURIComponent(user.usuario)}`);
@@ -52,30 +55,12 @@ export default function Consultas() {
         setNomePaciente(null);
       }
     } else {
-      setNomePaciente(null); // Zera o nome do paciente para ADMIN/Médico
+      setNomePaciente(null);
     }
-  }
+  }, [user]); // Depende de 'user'
 
-  async function fetchMedicos() {
-    try {
-      const response = await api.get('/api/medicos/get/all');
-      setMedicos(response.data);
-    } catch (error) {
-      console.error('Erro ao carregar médicos', error);
-    }
-  }
-
-  // NOVA FUNÇÃO: Busca todos os pacientes
-  async function fetchPacientes() {
-    try {
-      const response = await api.get('/api/usuario/paciente/get/all');
-      setPacientes(response.data);
-    } catch (error) {
-      console.error('Erro ao carregar pacientes', error);
-    }
-  }
-
-  async function fetchConsultas() {
+  // Função para buscar consultas
+  const fetchConsultas = useCallback(async () => {
     try {
       setLoading(true);
       const response = await api.get('/api/consulta/get/all');
@@ -84,13 +69,10 @@ export default function Consultas() {
       if (user.role === 'paciente' && nomePaciente) {
         const nomePacienteNormalizado = normalizeString(nomePaciente);
         dados = dados.filter(c => normalizeString(c.paciente) === nomePacienteNormalizado);
-      } else if (user.role === 'medico' && user.medicoId) { // Filtro para médicos
-        // Se a API de consulta não retornar o CRM, você precisará ajustar aqui
-        // ou fazer a API filtrar por médico logado.
-        const crmMedicoNormalizado = normalizeString(user.medicoId); // Assumindo user.medicoId é o CRM
+      } else if (user.role === 'medico' && user.medicoId) {
+        const crmMedicoNormalizado = normalizeString(user.medicoId);
         dados = dados.filter(c => normalizeString(c.medicoId) === crmMedicoNormalizado);
       }
-
 
       setConsultas(dados);
       setError('');
@@ -100,7 +82,23 @@ export default function Consultas() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [user, nomePaciente, normalizeString]); // Depende de 'user', 'nomePaciente' e 'normalizeString'
+
+  // Efeito para buscar dados iniciais (médicos, pacientes, nome do paciente logado)
+  useEffect(() => {
+    fetchMedicos();
+    if (user.role === 'admin' || user.role === 'medico') {
+      fetchPacientes();
+    }
+    fetchPacienteNome(); // Linha 34:6
+  }, [user.role, fetchMedicos, fetchPacientes, fetchPacienteNome]); // Dependências: user.role e as funções memoizadas
+
+  // Efeito para buscar consultas (roda após nomePaciente ser definido ou role mudar)
+  useEffect(() => {
+    if (user.role !== 'paciente' || nomePaciente) {
+      fetchConsultas(); // Linha 42:6
+    }
+  }, [nomePaciente, user.role, fetchConsultas]); // Dependências: nomePaciente, user.role e a função memoizada
 
   function handleAdd() {
     setSelectedConsulta(null);
@@ -131,11 +129,9 @@ export default function Consultas() {
       const dataToSend = {
         dataConsulta: data.dataConsulta,
         medicoId: data.medicoId,
-        // Define pacienteId com base no papel do usuário
         pacienteId: user.role === 'paciente' ? user.pacienteId : data.pacienteId,
       };
 
-      // Adicione um log antes de enviar
       console.log("Dados da consulta a enviar:", dataToSend);
 
       if (isEdit) {
@@ -202,8 +198,8 @@ export default function Consultas() {
           onSubmit={handleSubmit}
           initialData={selectedConsulta}
           medicos={medicos}
-          pacientes={pacientes} 
-          userRole={user.role} 
+          pacientes={pacientes}
+          userRole={user.role}
         />
       )}
     </div>
