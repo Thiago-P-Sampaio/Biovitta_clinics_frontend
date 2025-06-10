@@ -14,7 +14,7 @@ import Relatorios from './features/Relatorios/Relatorios';
 import Layout from './components/Layout'; // Layout é onde o Outlet deve ser usado
 
 function PrivateRoute({ children }) {
-  const { token, user, loading } = useAuth();
+  const { token, loading } = useAuth();
 
   if (loading) return <p>Carregando...</p>;
 
