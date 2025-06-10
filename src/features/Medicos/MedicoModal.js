@@ -9,10 +9,11 @@ export default function MedicoModal({ isOpen, onClose, onSubmit, initialData, is
     telefone: '',
     imgUrl: '',
     senha: '',
-    especialidadesIds: []
+    especialidades: '' // Alterado para string
   });
 
-  const [especialidades, setEspecialidades] = useState([]);
+  // O fetch de especialidades e o estado `especialidades` não são mais necessários aqui.
+  // Você pode remover o `useEffect` que faz o fetch e a declaração de `especialidades`
 
   useEffect(() => {
     if (initialData) {
@@ -22,8 +23,8 @@ export default function MedicoModal({ isOpen, onClose, onSubmit, initialData, is
         email: initialData.email,
         telefone: initialData.telefone,
         imgUrl: initialData.imgUrl,
-        senha: '',
-        especialidadesIds: initialData.especialidades?.map(e => e.especialidade_id) || []
+        senha: '', // Senha sempre vazia para segurança ao editar
+        especialidades: initialData.especialidades || '' // Assume que initialData.especialidades já é uma string
       });
     } else {
       setForm({
@@ -33,41 +34,21 @@ export default function MedicoModal({ isOpen, onClose, onSubmit, initialData, is
         telefone: '',
         imgUrl: '',
         senha: '',
-        especialidadesIds: []
+        especialidades: ''
       });
     }
   }, [initialData]);
-
-  useEffect(() => {
-    async function fetchEspecialidades() {
-      try {
-        const res = await fetch('http://localhost:8080/biovitta/api/especialidades/get/all');
-        const data = await res.json();
-        setEspecialidades(data);
-      } catch (error) {
-        console.error('Erro ao carregar especialidades', error);
-      }
-    }
-    fetchEspecialidades();
-  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   }
 
-  function handleEspecialidadesChange(e) {
-    const options = e.target.options;
-    const selectedIds = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) selectedIds.push(Number(options[i].value));
-    }
-    setForm(prev => ({ ...prev, especialidadesIds: selectedIds }));
-  }
+  // A função handleEspecialidadesChange não é mais necessária
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!form.crm || !form.nome || !form.email || !form.telefone || (!isEdit && !form.senha)) {
+    if (!form.crm || !form.nome || !form.email || !form.telefone || (!isEdit && !form.senha) || !form.especialidades) {
       alert('Preencha todos os campos obrigatórios');
       return;
     }
@@ -104,13 +85,15 @@ export default function MedicoModal({ isOpen, onClose, onSubmit, initialData, is
           )}
 
           <label>Especialidades*</label>
-          <select multiple value={form.especialidadesIds} onChange={handleEspecialidadesChange} required>
-            {especialidades.map(e => (
-              <option key={e.especialidade_id} value={e.especialidade_id}>
-                {e.nome}
-              </option>
-            ))}
-          </select>
+          {/* Campo de input tipo texto para as especialidades */}
+          <input
+            type="text"
+            name="especialidades"
+            value={form.especialidades}
+            onChange={handleChange}
+            placeholder="Ex: Cardiologista, Pediatra, Dermatologista"
+            required
+          />
 
           <div className="modalActions">
             <button type="button" onClick={onClose} className="btnCancel">Cancelar</button>

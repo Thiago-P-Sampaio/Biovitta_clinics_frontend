@@ -95,8 +95,8 @@ export default function ConsultaModal({ isOpen, onClose, onSubmit, initialData, 
             ))}
           </select>
 
-          <label>Especialidades do Médico</label>
-          <input type="text" readOnly value={especialidades.map(e => e.nome).join(', ')} />
+          {/* <label>Especialidades do Médico</label>
+          <input type="text" readOnly value={especialidades.map(e => e.nome).join(', ')} /> */}
 
           <label>Data e Hora da Consulta*</label>
           <input

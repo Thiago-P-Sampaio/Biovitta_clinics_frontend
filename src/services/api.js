@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/biovitta',
+  baseURL: 'https://biovitta.azurewebsites.net/biovitta',
 });
 
 export default api;

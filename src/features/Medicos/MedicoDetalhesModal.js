@@ -1,26 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react'; // Não precisa mais de useEffect e useState aqui
 import './MedicoDetalhesModal.css';
-// Garanta que o Font Awesome esteja importado globalmente no seu projeto (ex: App.js ou index.js)
-// import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export default function MedicoDetalhesModal({ isOpen, onClose, medico }) {
-  const [especialidades, setEspecialidades] = useState([]);
-
-  useEffect(() => {
-    async function fetchEspecialidades() {
-      try {
-        const res = await fetch(`http://localhost:8080/biovitta/api/medicos/${medico.crm}/especialidades`);
-        const data = await res.json();
-        setEspecialidades(Array.isArray(data.especialidadesLista) ? data.especialidadesLista : []);
-      } catch (error) {
-        console.error('Erro ao carregar especialidades do médico', error);
-        setEspecialidades([]);
-      }
-    }
-    if (medico) fetchEspecialidades();
-  }, [medico]);
+  // Não precisamos mais do estado `especialidades` e do useEffect para o fetch.
+  // A propriedade `medico.especialidades` já será uma string.
 
   if (!isOpen) return null;
+
+  // Garante que medico.especialidades é uma string ou uma string vazia para exibição.
+  const especialidadesExibicao = medico.especialidades ? medico.especialidades : 'Nenhuma';
 
   return (
     <div className="modalOverlay">
@@ -31,16 +19,16 @@ export default function MedicoDetalhesModal({ isOpen, onClose, medico }) {
 
         <h2 className="modalTitle">Detalhes do Médico</h2>
         
-        <div className="medicoDetailsHeader"> {/* Novo div para centralizar imagem e nome */}
+        <div className="medicoDetailsHeader">
           <img
             src={medico.imgUrl || 'https://via.placeholder.com/150/6a1b9a/ffffff?text=Médico'}
             alt={medico.nome}
-            className="medicoDetailsImage" // Nova classe para a imagem
+            className="medicoDetailsImage"
           />
-          <h3 className="medicoDetailsName">{medico.nome}</h3> {/* Nova classe para o nome */}
+          <h3 className="medicoDetailsName">{medico.nome}</h3>
         </div>
 
-        <div className="medicoDetailsBody"> {/* Novo div para o corpo dos detalhes */}
+        <div className="medicoDetailsBody">
           <p className="medicoDetailItem">
             <strong>CRM:</strong> {medico.crm}
           </p>
@@ -54,12 +42,12 @@ export default function MedicoDetalhesModal({ isOpen, onClose, medico }) {
           </p>
           <p className="medicoDetailItem">
             <i className="fas fa-tags medicoDetailIcon"></i> {/* Ícone de tags/especialidades */}
-            <strong>Especialidades:</strong> {especialidades.map(e => e.nome).join(', ') || 'Nenhuma'}
+            <strong>Especialidades:</strong> {especialidadesExibicao} {/* Exibe a string diretamente */}
           </p>
         </div>
 
         <div className="modalActions">
-          <button onClick={onClose} className="btnConfirmClose">Fechar</button> {/* Renomeei a classe do botão */}
+          <button onClick={onClose} className="btnConfirmClose">Fechar</button>
         </div>
       </div>
     </div>
