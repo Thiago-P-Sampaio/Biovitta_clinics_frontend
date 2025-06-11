@@ -1,70 +1,162 @@
-# Getting Started with Create React App
+# Biovitta - Frontend da Aplicação de Gestão de Clínicas
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este repositório contém o código-fonte do frontend da aplicação Biovitta, desenvolvida para ser uma interface intuitiva e eficiente para a gestão de clínicas. Ele permite que usuários (pacientes, médicos e administradores) interajam com o sistema de forma fluida, acessando funcionalidades como agendamento de consultas, visualização de dados de pacientes e médicos, e geração de relatórios.
 
-## Available Scripts
+## Tecnologias Utilizadas
 
-In the project directory, you can run:
+O projeto frontend Biovitta foi construído com as seguintes tecnologias e bibliotecas:
 
-### `npm start`
+  * **React**: Biblioteca JavaScript para a construção de interfaces de usuário.
+  * **NPM (Node Package Manager)**: Gerenciador de pacotes para JavaScript.
+  * **Axios**: Cliente HTTP baseado em Promises para fazer requisições à API.
+  * **Formik**: Biblioteca para construção de formulários no React, facilitando a validação e o gerenciamento de estados.
+  * **Yup**: Biblioteca de validação de schemas, utilizada em conjunto com Formik para validar dados de formulários.
+  * **JWT-decode**: Para decodificar JSON Web Tokens.
+  * **React Router DOM**: Para roteamento declarativo no React.
+  * **Styled Components**: Para estilização de componentes React utilizando CSS-in-JS.
+  * **React Icons**: Biblioteca de ícones populares.
+  * **React Modal**: Para a criação de modais acessíveis.
+  * **React Pro Sidebar**: Para a criação de sidebars responsivas.
+  * **Date-fns**: Biblioteca utilitária para manipulação de datas.
+  * **Font Awesome Free**: Para ícones adicionais.
+  * **Testing Library (DOM, Jest-DOM, React, User-Event)**: Conjunto de ferramentas para facilitar testes de componentes React.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  ###
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+<div align="center">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" height="40" alt="git logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" height="40" alt="github logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg" height="40" alt="npm logo"  />
+  <img width="12" />
+  <img src="https://cdn.simpleicons.org/netlify/00C7B7" height="40" alt="netlify logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" height="40" alt="vscode logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="40" alt="react logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="40" alt="javascript logo"  />
+</div>
 
-### `npm test`
+###
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Como Clonar e Iniciar o Projeto
 
-### `npm run build`
+Siga os passos abaixo para ter o projeto frontend rodando em sua máquina local:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1.  **Clonar o Repositório:**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    ```bash
+    git clone https://github.com/Thiago-P-Sampaio/Biovitta_clinics_frontend.git
+    ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2.  **Navegar até a Pasta do Projeto:**
 
-### `npm run eject`
+    ```bash
+    cd Biovitta_clinics_frontend
+    ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3.  **Instalar as Dependências:**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    ```bash
+    npm install
+    ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4.  **Iniciar a Aplicação:**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+    ```bash
+    npm start
+    ```
 
-## Learn More
+Após a execução do comando `npm start`, a aplicação será iniciada em modo de desenvolvimento e estará acessível em `http://localhost:3000` (ou outra porta disponível, caso a 3000 esteja em uso).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Estrutura de Pastas
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+A estrutura de pastas do projeto foi organizada para promover a modularidade e facilitar a manutenção:
 
-### Code Splitting
+```
+public
+src
+├── assets
+├── components
+├── context
+├── features
+│   ├── Auth
+│   ├── Consultas
+│   ├── Medicos
+│   ├── Pacientes
+│   └── Relatorios
+├── hooks
+├── pages
+├── services
+├── styles
+├── utils
+├── App.css
+├── App.js
+├── App.test.js
+├── index.css
+├── index.js
+├── logo.svg
+├── reportWebVitais.js
+└── setupTests.js
+.gitignore
+package-lock.json
+package.json
+README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  * **`assets`**: Contém arquivos estáticos como imagens, ícones, etc.
+  * **`components`**: Componentes React reutilizáveis em toda a aplicação.
+  * **`context`**: Contextos React para gerenciamento de estado global.
+  * **`features`**: Módulos que encapsulam funcionalidades específicas da aplicação (ex: `Auth`, `Consultas`, `Medicos`, `Pacientes`, `Relatorios`). Cada módulo pode conter seus próprios componentes, hooks, e lógica.
+  * **`hooks`**: Custom Hooks React para reutilizar lógicas com estado.
+  * **`pages`**: Componentes que representam as páginas da aplicação.
+  * **`services`**: Lógica para interagir com a API backend.
+  * **`styles`**: Arquivos de estilos globais ou temas.
+  * **`utils`**: Funções utilitárias e helpers.
+  * **`App.js`**: Componente raiz da aplicação.
+  * **`index.js`**: Ponto de entrada da aplicação React.
+---
+## api.js: `src > services >  api.js >`
+```JavaScript
+import axios from 'axios';
+// alterar para contexto de sua aplicação(SEU IP LOCAL): 
+// exemplo: http://192.168.1.170:8080/biovitta
+const api = axios.create({
+  baseURL: 'https://biovitta.azurewebsites.net/biovitta',
+});
+// Alterar nos outros arquivos que não importam essa 'const'
+export default api;
+```
 
-### Analyzing the Bundle Size
+## Deploy
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+O frontend da aplicação Biovitta está atualmente em deploy no Netlify:
 
-### Making a Progressive Web App
+  * **Frontend (Netlify):** [https://biovitta.netlify.app/login](https://biovitta.netlify.app/login)
+  * **Backend (Azure for Students):** [https://biovitta.azurewebsites.net/](https://biovitta.azurewebsites.net/)
+  ---
+###
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  <table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://github.com/Thiago-P-Sampaio/Biovitta_clinics_backend.git">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="100px;" alt="Foto"/><br>
+        <sub>
+          <b>Repositório Back-end</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Thiago-P-Sampaio/Biovitta_clinics_app.git">
+        <img src="https://cdn.simpleicons.org/android/3DDC84" width="100px;" alt="Foto"/><br>
+        <sub>
+          <b>Repositório REACT-MOBILE</b>
+        </sub>
+      </a>
+    </td>
+    </tr>
+    </table>
